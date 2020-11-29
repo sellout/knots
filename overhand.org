@@ -1,0 +1,200 @@
+#+title: Lots of knots are the overhand knot
+
+You might think you don't know how to tie many knots. But if you know the
+overhand knot (the simplest knot there is), you know a lot of knots!
+
+These are /usually/ not the best knot for the job, but they'll get the job done
+in most cases -- just make sure you're not using these for personal safety. In
+that case, make sure you know your knots for real and are well-versed in the
+safety requirements for your activity. But ... these knots should help get the
+novice knotter through some tough spots.
+
+There are currently 16 knots here (15 actually useful), that cover a wide
+variety of uses -- stopping and binding, hitching and bending. If you get
+familiar with these and find yourself using one or two of them a good deal, I've
+also listed "better" knots (often there are tradeoffs) for you to explore when
+you find one of these is falling short.
+
+#+name: knot-graph
+| from                  | to              | label |
+|-----------------------+-----------------+-------|
+| slip                  | overhand        |       |
+| overhand noose        | overhand        |       |
+| double overhand       | overhand        |       |
+| Ashley's stopper      | overhand noose  |       |
+| square                | overhand        |       |
+| granny                | overhand        |       |
+| surgeon's             | square          |       |
+| surgeon's             | double overhand |       |
+| Ian's secure shoelace | square          |       |
+| Ian's secure shoelace | double overhand |       |
+| strangle              | double overhand |       |
+| half hitch            | overhand        |       |
+| clove hitch           | half hitch      |       |
+| barrel hitch          | overhand        |       |
+| water                 | overhand        |       |
+| European death        | overhand        |       |
+| fisherman's           | overhand        |       |
+| overhand loop         | overhand        |       |
+| trucker's hitch       | overhand loop   |       |
+| trucker's hitch       | slip            |       |
+
+* overhand knot
+
+Also known as a "half knot", which is a good way to think of it here, because
+generally there is one or more parts added to define any of these knots.
+
+This is also colloquially known as a "pretzel knot", due to the superficial
+similarity to the pretzel, although pretzels are not knotted, but simply
+twisted.
+
+* slip knot
+
+Also a "slipped overhand knot", this is an overhand with a bight before the
+working end. It's often useful for quickly untying.
+
+* overhand noose
+
+This is the same as a slip knot, except the bight is before the standing end
+(leaving the bight to constrict like a noose).
+
+* double overhand knot
+
+Just like the overhand, but has a second pass through the loop. Makes a larger
+stopper.
+
+* Ashley's stopper knot
+
+Clifford Ashley literally wrote the book on knots, collecting over 3,000 of
+them, some of his own invention. This is one of those. He thought he was
+re-creating a knot he saw in the wild, but afterward realized the knot he copied
+was a water-swollen figure-8.
+
+This knot is used as the stopper at the end of a line -- tie an overhand noose,
+then slip the working end through the noose and tighen. If you look at the
+finished knot from the standing end, it should look like a trefoil, which
+provides a wide and balanced stopper that is very effective.
+
+** better knots
+
+This is probably the best stopper knot there is.
+
+* square knot (or reef knot, or shoelace knot) 
+
+Tie an overhand knot, then tie another one, reversing front and back.
+
+This is also the knot you /should/ be using to tie your shoes, taking a bight on
+each side of the second overhand knot to form the bow.
+
+While it's great for tying shoelaces, this should /not/ be used as a bend, and
+can fail dangerously. The distinction is in the direction the force is
+applied. If it's applied along the knot (as in a bend), it can fail; but if it's
+applied perpendicularly, it won't.
+
+Also, pulling on either tail can free the knot, so if your shoelaces are short,
+you don't need the bow. Tying just a square knot can be untied just as easily.
+
+** granny knot
+
+However, this is the (probably ageist & misogynistically-named) knot many people
+accidentally use to tie their shoes. It's just two /identical/ (rather than
+reversed) overhand knots. There is almost no situation when this knot is
+preferred over the square knot.
+
+** better knots
+
+For tying shoelaces, try Ian's secure shoelace knot.
+
+* surgeon's knot
+
+Like a square knot, but the first overhand knot is a double. This creates extra
+friction, keeping more tension in the line while the second half of the knot is
+finished. Useful for slippery shoelaces, or for tying sutures (hence the name).
+
+* [[https://www.fieggen.com/shoelace/secureknot.htm][Ian's secure shoelace knot]]
+
+This is a more modern invention. It's like an inverted surgeon's knot. You tie a
+single overhand knot first, followed by a reversed double overhand knot
+(optionally with bights to make a bow). This is a better shoelace knot, that is
+almost impossible to have come loose, compared to the usual square knot.
+
+* strangle knot
+
+A double overhand tied around something to "strangle" (commonly the neck of a
+bag).
+
+* half hitch
+
+Since the overhand knot is known as a "half knot", it makes sense that it would
+be used to tie the "half hitch".
+
+* clove hitch
+
+Two half hitches ... there is a variant of this /called/ "two half hitches",
+when tied over the standing part of the rope as a backup to some other knot.
+
+* barrel hitch
+
+A "hitch" is a knot used to attach a line to something. In this case, it
+attaches the line to a barrel (or bucket, or other container that you want to
+carry).
+
+Sit the barrel on top of the line, then lift the line up both sides to meet in
+the middle of the top. Tie an ovehand knot at the top. Separate the overhand
+knot in the middle, sliding half of it down each side of the barrel. Now connect
+the two loose ends of the line above the top of the barrel, forming a
+handle. Carry your barrel.
+
+* water knot
+
+Usually used to connect flat webbing, but it can also be used for other
+lines. Loosely tie an overhand knot at the end of one line, then feed the other
+line through the knot backward, tracing the original overhand knot. Pull tight.
+
+* European death knot
+
+Not at all a death knot, this is a knot used for rappelling that slides easily
+through an anchor. Put the ends of two ropes side-by-side, and tie them together
+into a single overhand knot. The knot is "offset", leaving one side of the rope
+smooth, with the bulk of the knot on the other side. This is what prevents it
+from getting hung up when run over an anchor.
+
+* fisherman's knot
+
+This is a "bend", for joining two ropes (much like the water knot and EDK). In
+this one, each overhand knot is tied around the standing end of the other line,
+so the finished overhand knots pull against each other when tension is applied.
+
+It's not actually particularly useful for fishing, as it can slip on the nylon
+monofilament used for most fishing lines, but it is a common knot in knitting,
+where it's used to join strands of yarn.
+
+This can also be tied using double overhand knots on both ends to make it more
+secure.
+
+* overhand loop
+
+Take a bight at a place you want to add a loop in a line, and tie an overhand
+knot. You now have a standing loop.
+
+** better knots
+
+The alpine butterfly knot is a much more stable and easier to untie standing
+loop that can be tensioned on any combination of ends.
+
+* trucker's hitch
+
+This knot is used to make an highly-tensioned line (think of a trucker strapping
+down their load, or a clothesline). It provides a 3:1 mechanical advantage when
+tensioning, so you can turn paracord into a guitar string with this. It is
+really made up of a couple other knots, and those knots can be pretty
+varied. But in keeping with the theme here, we'll select overhand-based knots.
+
+First, tie an overhand loop in the line before the section that is going to wrap
+around whatever you're hitching it to -- probably leave a /lot/ of space, as the
+tensioning of the line here can give you a lot more slack than you expect. Then
+wrap the working end around the object being hitched. Feed the line back through
+the loop. Now is where the mechanical advantage comes in -- pull the working end
+back toward the object being hitched, really tightening up the line. Finally,
+tie the working end off around the loop, using a slip knot. This will allow a
+simple pull to untie the hitch when needed.

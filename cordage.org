@@ -1,0 +1,298 @@
+#+title: *Cordage*: a /very/ applied category
+
+* background
+
+I had started teaching my kids knots, and I was getting frustrated with the lack
+of any notation system for knot tying. A lot of drawings, photos, videos, and
+poor prose. But nothing to describe a knot precisely.
+
+As I started to write some things out, I noticed they looked a lot like string
+diagrams. I quickly noticed braids and traces. And I was curious to see how far
+I could push it.
+
+To give the conclusion up-front, it turns out that ropes are objects in a ribbon
+category with a trace. Now, let's talk about what that means ...
+
+#+name: category-graph
+| from     | to                | label |
+|----------+-------------------+-------|
+| braided  | monoidal category |       |
+| balanced | braided           |       |
+| traced   | balanced          |       |
+| rigid    | monoidal category |       |
+| ribbon   | balanced          |       |
+| ribbon   | rigid             |       |
+
+* [[https://ncatlab.org/nlab/show/string+diagram][*string* diagrams]]
+
+In category theory, there is a way of notating monoidal categories that is known
+as a "string diagram". This is a very auspicious start for us. We haven't
+started talking about Cordage yet, but strings are already in the lexicon.
+
+In a string diagram, strings represent objects, and boxes represent morphisms
+(or nodes instead of boxes for some fundamental operations).
+
+<include some string diagrams>
+
+* *braided* monoidal category
+
+Before we get to knots, lets talk about braids.
+
+In a monoidal category you have some tensor product, but what can you do with
+it? associate, or deal with units, that's it. But now we have the ability to
+~braid~ them -- that is, swap two of the elements of the product.
+
+This is standard category theory terminology, and yes, right up our alley.
+
+You're probably familiar with
+
+#+begin_src haskell
+swap :: (a, b) -> (b, a)
+swap (a, b) = (b, a)
+#+end_src
+
+And ~swap~ /is/ a braiding. But ~swap~ is stronger than what we're talking
+about. ~swap . swap = id~, but ~braid . braid~ isn't generally ~id~. Let's try
+it with our cords. First we braid, crossing the left over the right. Then we
+braid again, crossing the left over the right. If this was identity, the final
+result should be two unbraided lines, but it's not.
+
+#+begin_src haskell
+traditional :: (a, b, c) -> (b, c, a)
+traditional = id ⊗ braid' . braid ⊗ id
+
+traditional' :: (a, b, c) -> (a, b, c)
+traditional' = repeat (traditional . traditional . traditional)
+#+end_src
+
+#+begin_src haskell
+fourStrandRound :: (a, b, c, d) -> (b, a, d, c)
+fourStrandRound =
+  id ⊗ braid ⊗ id
+  . id ⊗ braid ⊗ id
+  . id ⊗ braid
+  . id ⊗ braid' ⊗ id
+  . id ⊗ braid' ⊗ id
+  . braid' ⊗ id
+
+fourStrandRound' :: (a, b, c, d) -> (a, b, c, d)
+fourStrandRound' = getEndo . fold $ repeat (Endo $ fourStrandRound . fourStrandRound)
+#+end_src
+
+<show some more braidings>
+
+So, ~swap~ is "symmetric", whereas our cords only follow a weaker "braided"
+structure. This also means that we're not going to be talking about compact
+closed categories today -- just a heads-up, because the more CT-fluent here
+might be pulled in that direction with some of the later features we discuss.
+
+* balanced monoidal category
+
+Balanced monoidal categories introduce a way to "twist" an object.
+
+This is most obvious with flat webbing, but even round ropes have a "twist" to
+them. If you take one of your lines and roll it through your fingers, you can
+see the introduction of a twist.
+
+Again, we're not talking about symmetric categories, but if we were, in that
+case the twist is just ~id~.
+
+* traced monoidal category
+
+When you rolled the line to insert the twist, did you notice anything about how
+the line moved? Give it a little slack when you twist, and what happens?
+
+A loop forms.
+
+In category theory, this loop is called a trace. And here is where we /start/ to
+see our category come to life. One of the axioms of a traced category is
+"yanking", which states ~trace braid = id~.
+
+So, does applying ~trace braid~ to our cord result in ~id~ (i.e., a single
+straight line)? (*NB*: we're ignoring the ~twist~ here, but as our category
+isn't symmetrical, we /do/ need to introduce a twist for this to work out, but
+in practice with knots we can generally elide the twist from the perspective of
+instructions for humans -- the knot will still contain a twist).
+
+Yep, ~trace braid~ is just a simple loop, there's nothing to it. When you pull
+on that loop, you have a straight line.
+
+Well, let's do something that /isn't/ ~id~ ... add a couple more ~braid~ to your ~trace~.
+
+#+begin_src haskell
+overhand :: a -> a
+overhand = trace (braid . braid . braid)
+#+end_src
+
+It doesn't matter whether your ~braid~ is left-over-right or right-over-left, so
+long as you're consistent about it.
+
+Braiding is an isomorphism, so it means we can also un-braid (so if you braid
+left-over-right, then unbraiding is right-over-left). Now we can tie something a
+/little/ more complicated.
+
+#+begin_src haskell
+slip :: a -> a
+slip = trace (braid . braid . braid . braid' . braid')
+#+end_src
+
+There something tricky here. Can anyone spot it?
+
+Since ~braid~ is an isomorphism, ~braid . braid' = id~. So let's simplify our slip knot.
+
+#+begin_src haskell
+slip :: a -> a
+slip = trace (braid . braid . braid . braid' . braid')
+--                            |____________|
+slip = trace (braid . braid . braid')
+--                    |____________|
+slip = trace braid
+--     |_________|
+slip = id
+#+end_src
+
+And so, yes, if we pull on our slip knot, it disappears, leaving us with the
+straight cord -- ~id~.
+
+As a notational convenience, I use the ring operator (~∘~) instead of a period
+when I want to defer a normalization. It gives the reader a hint where bights
+should occur.
+
+#+begin_src haskell
+slip :: a -> a
+slip = trace (braid . braid . braid ∘ braid' . braid')
+#+end_src
+
+* rigid monoidal category
+
+Tracing gets us tantalizingly close to our goal, but it falls short of
+describing most knots. We need to be able to break down the turns of the loop in
+order to be able to describe more.
+
+That's what a rigid category gives us -- dual objects, such that `A ⊗ A' =
+Unit`. We can use this to describe a turn in a cord.
+
+#+begin_src haskell
+square :: (a, a') -> (b', b)
+square =
+  id ⊗ cup ⊗ id
+  . (braid . braid . braid) ⊗ (braid' . braid' . braid')
+  . id ⊗ cap ⊗ id
+#+end_src
+
+Unfortunately, we start to lose our way here. This no longer gives a clear
+description of /how to tie/ the knot. Using `cup` and `cap` directly makes a bit
+more sense if we attach types to them:
+
+#+begin_src haskell
+square :: (a, a') -> (b', b)
+square =
+  id @b' ⊗ cup @a @a' ⊗ id @b
+  . (braid . braid . braid) ⊗ (braid' . braid' . braid')
+  . id @a ⊗ cap @b' @b ⊗ id @a'
+#+end_src
+
+But it still isn't clear that when tying this, we want to handle the first
+"column" first, then do the two turns, then handle the second column. But we
+/can/ define a few new useful operations that will help us:
+
+#+begin_src haskell
+-- | A bend is a knot that connects two lines. Note that the actual type uses
+--   the /dual/ of the output line. That indicates that we connect the bottom
+--   end of @a@ to the upper end of @b@.
+type Bend a b = a -> b'
+
+-- | Not all bends are described by this function, but it captures at least one
+--   class of them.
+bend :: ((a, b') -> (b', a)) -> ((b, a') -> (a', b)) -> Bend a b
+bend first second = id ⊗ cup ⊗ counit . first ⊗ second . id ⊗ cap ⊗ unit
+#+end_src
+
+Now, we can describe ~bend~ once, as a knot that brings two strings together
+from opposite sides, knotting them in some way, then bending them back and
+knotting them again.
+
+#+begin_src haskell
+square, granny, surgeon, ian :: (a, a') -> (b', b)
+square = bend (braid . braid . braid) (braid' . braid' . braid')
+granny = bend (braid . braid . braid) (braid . braid . braid)
+surgeon = bend (braid . braid . braid . braid . braid) (braid' . braid' . braid')
+ian = bend (braid . braid . braid) (braid' . braid' . braid' . braid' . braid')
+#+end_src
+
+Looking at these four similar knots, we now see ~square~ described as an
+overhand crossing before the bends and an inverse overhand crossing after the
+bends, while a ~granny~ uses the same handedness for both crossings, a ~surgeon~
+does an extra loop through on the first pass, and ~ian~ does an extra loop
+through on the second pass.
+
+#+begin_src haskell
+-- | A hitch is a "terminating" knot that is intended to attach to something
+--   else.
+type Hitch a = a -> ()
+
+tautlineHitch :: Hitch a
+tautlineHitch =
+  cup
+  . id ⊗ cup ⊗ id
+  . (braid . braid . braid . braid) ⊗ braid'
+  . id ⊗ cap ⊗ id
+  . id ⊗ cup ⊗ id
+  . (braid . braid) ⊗ braid'  
+  . id ⊗ cap ⊗ id
+  . id ⊗ unit
+
+-- | @loop@ is something that would be passed to trace (but here we connect the
+--   `trace` to something, so we don't use `trace` directly).
+--
+--   However, if we use a slip knot as the loop, it's different from how we
+--   defined the slip knot above, as with that one, the trace collapses to form
+--   the knot, with the bight existing elsewhere, but here we need the bight to
+--   be the trace.
+truckersHitch :: ((a, a) -> (a, a)) -> ((a, a, a') -> (a, a')) -> Hitch a
+truckersHitch loop attach =
+  cup
+  . attach
+  . id ⊗ cup ⊗ id
+  . braid ⊗ braid'
+  . id ⊗ cap ⊗ id
+  . loop ⊗ id
+  . id ⊗ cap
+#+end_src
+
+* *ribbon* category
+
+Can you believe that we're still just talking about things in standard category
+theoretical ways? Strings, braids, and now ribbons? This is getting silly.
+
+This is most obvious with flat webbing, but even round ropes have a "twist" to
+them. Ribbon categories give you a way to "twist" an object 
+
+* Conclusions
+
+So now, instead of teaching my kids knots, I only have to teach them about
+traced ribbon categories, then they can learn the knots on their own!
+
+* other thoughts
+
+- this doesn't allow rigid bodies, I don't think. E.g., if there's an object
+  (say, a rod) that you can't "bend" backward using cup/cap, then it would mean
+  all the stuff above won't hold. So I think we can consider *Cordage*(/C/) a
+  full subcategory of /C/, containing all the objects that satisfy these
+  requirements. Then the inclusion functor basically introduces hitches -- tying
+  a line around something that isn't a line.
+
+- it seems this might not be as obvious a set of instructions as I had
+  hoped. ~trace~ works well, but generalizing that into uses of the cup/cap
+  operations makes it seem a bit ... non-linear. E.g., with the dual objects,
+  rather than talking about bringing the line backward /after/ some other tying,
+  we'll be talking about the dual of the line /in parallel with/ the other
+  tying.
+
+- there are still aspects of knots this doesn't cover -- dressing, tensioning,
+  etc. You can't identify the properties of a knot from these categorical
+  definitions. But you can see /how/ to tie them.
+
+* confusions
+
+- any *-autonomous category with a trace is compact closed, but I thought any rigid (autonomous) category had a canonical trace?
