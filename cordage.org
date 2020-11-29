@@ -68,11 +68,9 @@ traditional' = repeat (traditional . traditional . traditional)
 #+begin_src haskell
 fourStrandRound :: (a, b, c, d) -> (b, a, d, c)
 fourStrandRound =
-  id ⊗ braid ⊗ id
-  . id ⊗ braid ⊗ id
+  id ⊗ (braid . braid) ⊗ id
   . id ⊗ braid
-  . id ⊗ braid' ⊗ id
-  . id ⊗ braid' ⊗ id
+  . id ⊗ (braid' . braid') ⊗ id
   . braid' ⊗ id
 
 fourStrandRound' :: (a, b, c, d) -> (a, b, c, d)
