@@ -18,12 +18,13 @@ you find one of these is falling short.
 #+name: knot-graph
 | from                  | to              | label |
 |-----------------------+-----------------+-------|
+| overhand              | half            |       |
 | slip                  | overhand        |       |
 | overhand noose        | overhand        |       |
 | double overhand       | overhand        |       |
 | Ashley's stopper      | overhand noose  |       |
-| square                | overhand        |       |
-| granny                | overhand        |       |
+| square                | half    |       |
+| granny                | half            |       |
 | surgeon's             | square          |       |
 | surgeon's             | double overhand |       |
 | Ian's secure shoelace | square          |       |
@@ -41,12 +42,19 @@ you find one of these is falling short.
 
 * overhand knot
 
-Also known as a "half knot", which is a good way to think of it here, because
-generally there is one or more parts added to define any of these knots.
+The simplest knot. when the ends are fused, it forms the trefoil, which is the
+simplest mathematical knot.
 
 This is also colloquially known as a "pretzel knot", due to the superficial
 similarity to the pretzel, although pretzels are not knotted, but simply
 twisted.
+
+** half knot
+
+The underlying twists of the overhand knot (that is, without the loop) is called
+a half knot, because it is half of many other binding knots. So, if you can tie
+an overhand, you can tie a half, and from there you get to most of the other
+knots here.
 
 * slip knot
 

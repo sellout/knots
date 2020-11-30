@@ -1,4 +1,8 @@
 #+title: *Cordage*: a /very/ applied category
+#+latex_header: \usepackage{amsmath}
+#+latex_header: \usepackage{bm}
+#+latex_header: \usepackage{tikz}
+#+latex_header: \usetikzlibrary{braids}
 
 * background
 
@@ -57,13 +61,45 @@ it with our cords. First we braid, crossing the left over the right. Then we
 braid again, crossing the left over the right. If this was identity, the final
 result should be two unbraided lines, but it's not.
 
+*NB*: This is going to look like Haskell, but with some shortcuts that would be
+      illegal in Haskell. E.g., we ignore associativity -- if we have a triple
+      ~(a, b, c)~, we would normally have to rewrite that to ~(a, (b, c))~
+      before we could apply ~id ⊗ braid~ (where ~⊗~ is roughly ~bimap~), but
+      here we just assume the product is grouped the way we need. Similarly, we
+      assume ~⊗~ associates the way we want. So we can
+      ~id ⊗ braid ⊗ id :: (a, b, c, d) -> (a, c, b, d)~.
+
+*NB*: Similarly to associativity, we have a shorthand for a notion of
+     "duals". Both are indicated by a ~'~ at the end of a type or
+      identifier. Using actual Haskell, these would need to be more verbose.
+
 #+begin_src haskell
 traditional :: (a, b, c) -> (b, c, a)
 traditional = id ⊗ braid' . braid ⊗ id
-
-traditional' :: (a, b, c) -> (a, b, c)
-traditional' = repeat (traditional . traditional . traditional)
 #+end_src
+
+\begin{tikzpicture}
+\pic [
+  braid/.cd,
+  every strand/.style={ultra thick},
+  strand 1/.style={red},
+] {braid={s_1 s_2^{−1}}};
+\end{tikzpicture}
+
+#+begin_src haskell
+traditional' :: (a, b, c) -> (a, b, c)
+traditional' = traditional . traditional . traditional
+#+end_src
+
+\begin{tikzpicture}
+\pic [
+  braid/.cd,
+  every strand/.style={ultra thick},
+  strand 1/.style={red},
+  strand 2/.style={green},
+  strand 3/.style={blue},
+] {braid={s_1 s_2^{−1} s_1 s_2^{−1} s_1 s_2^{−1}}};
+\end{tikzpicture}
 
 #+begin_src haskell
 fourStrandRound :: (a, b, c, d) -> (b, a, d, c)
@@ -72,12 +108,32 @@ fourStrandRound =
   . id ⊗ braid
   . id ⊗ (braid' . braid') ⊗ id
   . braid' ⊗ id
-
-fourStrandRound' :: (a, b, c, d) -> (a, b, c, d)
-fourStrandRound' = getEndo . fold $ repeat (Endo $ fourStrandRound . fourStrandRound)
 #+end_src
 
-<show some more braidings>
+\begin{tikzpicture}
+\pic [
+  braid/.cd,
+  every strand/.style={ultra thick},
+  strand 1/.style={red},
+  strand 2/.style={green},
+  strand 3/.style={blue},
+] {braid={s_1^{-1} s_2^{−1} s_2^{−1} s_3 s_2 s_2}};
+\end{tikzpicture}
+
+#+begin_src haskell
+fourStrandRound' :: (a, b, c, d) -> (a, b, c, d)
+fourStrandRound' = fourStrandRound . fourStrandRound
+#+end_src
+
+\begin{tikzpicture}
+\pic [
+  braid/.cd,
+  every strand/.style={ultra thick},
+  strand 1/.style={red},
+  strand 2/.style={green},
+  strand 3/.style={blue},
+] {braid={s_1^{-1} s_2^{−1} s_2^{−1} s_3 s_2 s_2 s_1^{-1} s_2^{−1} s_2^{−1} s_3 s_2 s_2}};
+\end{tikzpicture}
 
 So, ~swap~ is "symmetric", whereas our cords only follow a weaker "braided"
 structure. This also means that we're not going to be talking about compact
@@ -118,8 +174,12 @@ on that loop, you have a straight line.
 Well, let's do something that /isn't/ ~id~ ... add a couple more ~braid~ to your ~trace~.
 
 #+begin_src haskell
+-- | Not a knot on its own, this is a component of /many/ knots.
+half :: (a, b) -> (b, a)
+half = braid . braid . braid
+
 overhand :: a -> a
-overhand = trace (braid . braid . braid)
+overhand = trace half
 #+end_src
 
 It doesn't matter whether your ~braid~ is left-over-right or right-over-left, so
@@ -131,7 +191,7 @@ left-over-right, then unbraiding is right-over-left). Now we can tie something a
 
 #+begin_src haskell
 slip :: a -> a
-slip = trace (braid . braid . braid . braid' . braid')
+slip = trace (half . braid' . braid')
 #+end_src
 
 There something tricky here. Can anyone spot it?
@@ -140,17 +200,19 @@ Since ~braid~ is an isomorphism, ~braid . braid' = id~. So let's simplify our sl
 
 #+begin_src haskell
 slip :: a -> a
+slip = trace (half . braid' . braid')
+--            |__|
 slip = trace (braid . braid . braid . braid' . braid')
---                            |____________|
+--                            |_____id_____|
 slip = trace (braid . braid . braid')
---                    |____________|
+--                    |_____id_____|
 slip = trace braid
---     |_________|
+--     |____id___|
 slip = id
 #+end_src
 
 And so, yes, if we pull on our slip knot, it disappears, leaving us with the
-straight cord -- ~id~.
+straight cord -- ~id~ (modulo ~twist~).
 
 As a notational convenience, I use the ring operator (~∘~) instead of a period
 when I want to defer a normalization. It gives the reader a hint where bights
@@ -158,6 +220,7 @@ should occur.
 
 #+begin_src haskell
 slip :: a -> a
+slip = trace (half ∘ braid' . braid')
 slip = trace (braid . braid . braid ∘ braid' . braid')
 #+end_src
 
@@ -167,15 +230,27 @@ Tracing gets us tantalizingly close to our goal, but it falls short of
 describing most knots. We need to be able to break down the turns of the loop in
 order to be able to describe more.
 
-That's what a rigid category gives us -- dual objects, such that `A ⊗ A' =
-Unit`. We can use this to describe a turn in a cord.
+That's what a rigid category gives us -- dual objects, such that
+
+#+begin_src haskell
+cap :: () -> (a', a)
+cup :: (a, a') -> ()
+#+end_src
+
+That is, for each object ~a~, there is some dual object ~a'~, such that the product is isomorphic to unit.
+We can use this to describe a turn in a cord.
+
+Rigid categories can be either "left" or "right" in general, but we have both,
+so we just say "rigid". What that means is that not only is the dual of ~a~
+~a'~, but the dual of ~a'~ is ~a~. So, we can view ~cup~ as either ~(a', a) ->
+()~ or ~(a, a') -> ()~, and the same for ~cap~.
 
 #+begin_src haskell
 square :: (a, a') -> (b', b)
 square =
-  id ⊗ cup ⊗ id
+                      id ⊗ cup ⊗ id
   . (braid . braid . braid) ⊗ (braid' . braid' . braid')
-  . id ⊗ cap ⊗ id
+  .                   id ⊗ cap ⊗ id
 #+end_src
 
 Unfortunately, we start to lose our way here. This no longer gives a clear
@@ -185,9 +260,9 @@ more sense if we attach types to them:
 #+begin_src haskell
 square :: (a, a') -> (b', b)
 square =
-  id @b' ⊗ cup @a @a' ⊗ id @b
+               id @b' ⊗ cup @a @a' ⊗ id @b
   . (braid . braid . braid) ⊗ (braid' . braid' . braid')
-  . id @a ⊗ cap @b' @b ⊗ id @a'
+  .            id @a  ⊗ cap @b' @b ⊗ id @a'
 #+end_src
 
 But it still isn't clear that when tying this, we want to handle the first
@@ -203,7 +278,10 @@ type Bend a b = a -> b'
 -- | Not all bends are described by this function, but it captures at least one
 --   class of them.
 bend :: ((a, b') -> (b', a)) -> ((b, a') -> (a', b)) -> Bend a b
-bend first second = id ⊗ cup ⊗ counit . first ⊗ second . id ⊗ cap ⊗ unit
+bend first second =
+   id ⊗ cup ⊗ counit
+ . first ⊗ second
+ . id ⊗ cap ⊗ unit
 #+end_src
 
 Now, we can describe ~bend~ once, as a knot that brings two strings together
@@ -224,6 +302,18 @@ bends, while a ~granny~ uses the same handedness for both crossings, a ~surgeon~
 does an extra loop through on the first pass, and ~ian~ does an extra loop
 through on the second pass.
 
+However, this ~bend~ can't describe a sheet bend, which looks like this:
+
+#+begin_src haskell
+sheet :: Bend a b
+sheet =
+             id ⊗  cup   ⊗ counit
+  .          braid' ⊗ braid
+  .          id ⊗ braid' ⊗ id -- this can't be represented in `bend`
+  . (braid . braid) ⊗ (braid' . braid')
+  .          id ⊗  cap   ⊗ unit
+#+end_src
+
 #+begin_src haskell
 -- | A hitch is a "terminating" knot that is intended to attach to something
 --   else.
@@ -231,14 +321,14 @@ type Hitch a = a -> ()
 
 tautlineHitch :: Hitch a
 tautlineHitch =
-  cup
-  . id ⊗ cup ⊗ id
+                                   cup
+  .                           id ⊗ cup ⊗ id
   . (braid . braid . braid . braid) ⊗ braid'
-  . id ⊗ cap ⊗ id
-  . id ⊗ cup ⊗ id
-  . (braid . braid) ⊗ braid'  
-  . id ⊗ cap ⊗ id
-  . id ⊗ unit
+  .                           id ⊗ cap ⊗ id
+  .                           id ⊗ cup ⊗ id
+  .                 (braid . braid) ⊗ braid'  
+  .                           id ⊗ cap ⊗ id
+  .                              id ⊗ unit
 
 -- | @loop@ is something that would be passed to trace (but here we connect the
 --   `trace` to something, so we don't use `trace` directly).
@@ -265,6 +355,14 @@ theoretical ways? Strings, braids, and now ribbons? This is getting silly.
 
 This is most obvious with flat webbing, but even round ropes have a "twist" to
 them. Ribbon categories give you a way to "twist" an object 
+
+* full subcategory
+
+Here we've been talking about *Cordage* on its own, but we can really consider
+*Cordage* a full subcategory of some other category /C/. That is, *Cordage*(/C/)
+is the subcategory of /C/ containing only objects that satisfy the above
+constraints. Hitches in particular are knots that arise between objects in
+*Cordage*(/C/) and objects in /C/ (but generally not in *Cordage*(/C/)).
 
 * Conclusions
 
